@@ -1,0 +1,6 @@
+export { BadRequestException } from './bad-request-exception'
+export { ConflictException } from './conflict-exception'
+export { ForbiddenException } from './forbidden-exception'
+export { ResourceNotFoundException } from './resource-not-found-exception'
+export { UnauthorizedException } from './unauthorized-exception'
+export { UnprocessableContentException } from './unprocessable-content-exception'

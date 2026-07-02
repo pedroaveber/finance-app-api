@@ -1,0 +1,330 @@
+### =======================================================
+###  HOME EXPENSES API — Client Requests
+###  Base URL: http://localhost:3333
+### =======================================================
+
+@BASE_URL = http://localhost:3333
+
+
+### ===================== HEALTH CHECK =====================
+
+# @name health-check
+GET {{BASE_URL}}/health-check
+
+
+### ===================== AUTH (Better Auth) =====================
+
+# @name auth-sign-up
+POST {{BASE_URL}}/api/auth/sign-up/email
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "senha123"
+}
+
+###
+
+# @name auth-sign-in
+POST {{BASE_URL}}/api/auth/sign-in/email
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "senha123",
+  "rememberMe": true
+}
+
+###
+
+# @name auth-get-session
+GET {{BASE_URL}}/api/auth/get-session
+
+###
+
+# @name auth-sign-out
+POST {{BASE_URL}}/api/auth/sign-out
+
+###
+
+# @name auth-update-user
+POST {{BASE_URL}}/api/auth/update-user
+Content-Type: application/json
+
+{
+  "name": "John Updated"
+}
+
+###
+
+# @name auth-delete-user
+POST {{BASE_URL}}/api/auth/delete-user
+
+###
+
+# @name auth-change-email
+POST {{BASE_URL}}/api/auth/change-email
+Content-Type: application/json
+
+{
+  "newEmail": "john.novo@example.com"
+}
+
+###
+
+# @name auth-list-sessions
+GET {{BASE_URL}}/api/auth/list-sessions
+
+###
+
+# @name auth-revoke-session
+POST {{BASE_URL}}/api/auth/revoke-session
+Content-Type: application/json
+
+{
+  "token": "SESSION_TOKEN"
+}
+
+###
+
+# @name auth-revoke-sessions
+POST {{BASE_URL}}/api/auth/revoke-sessions
+
+###
+
+# @name auth-revoke-other-sessions
+POST {{BASE_URL}}/api/auth/revoke-other-sessions
+
+###
+
+# @name auth-forget-password
+POST {{BASE_URL}}/api/auth/forget-password
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "redirectTo": "http://localhost:3000/reset-password"
+}
+
+###
+
+# @name auth-reset-password
+POST {{BASE_URL}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+  "newPassword": "novaSenha123",
+  "token": "RESET_TOKEN"
+}
+
+###
+
+# @name auth-validate-reset-token
+GET {{BASE_URL}}/api/auth/reset-password/RESET_TOKEN
+
+###
+
+# @name auth-change-password
+POST {{BASE_URL}}/api/auth/change-password
+Content-Type: application/json
+
+{
+  "currentPassword": "senha123",
+  "newPassword": "novaSenha123",
+  "revokeOtherSessions": true
+}
+
+###
+
+# @name auth-send-verification-email
+POST {{BASE_URL}}/api/auth/send-verification-email
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "callbackURL": "http://localhost:3000"
+}
+
+###
+
+# @name auth-verify-email
+GET {{BASE_URL}}/api/auth/verify-email?token=VERIFICATION_TOKEN
+
+###
+
+# @name auth-list-accounts
+GET {{BASE_URL}}/api/auth/list-accounts
+
+###
+
+# @name auth-unlink-account
+POST {{BASE_URL}}/api/auth/unlink-account
+Content-Type: application/json
+
+{
+  "providerId": "google"
+}
+
+###
+
+# @name auth-sign-in-social
+POST {{BASE_URL}}/api/auth/sign-in/social
+Content-Type: application/json
+
+{
+  "provider": "google",
+  "callbackURL": "http://localhost:3000"
+}
+
+###
+
+# @name auth-link-social
+POST {{BASE_URL}}/api/auth/link-social
+Content-Type: application/json
+
+{
+  "provider": "google"
+}
+
+###
+
+# @name auth-callback-google
+GET {{BASE_URL}}/api/auth/callback/google?code=AUTH_CODE&state=STATE
+
+
+### ===================== CATEGORIES =====================
+
+# @name get-categories-with-filter
+GET {{BASE_URL}}/categories?type=expense
+
+###
+
+# @name check-category
+GET {{BASE_URL}}/categories/check?type=expense&name=Alimentacao
+
+###
+
+# @name get-categories
+GET {{BASE_URL}}/categories
+
+###
+
+# @name create-category
+POST {{BASE_URL}}/categories
+Content-Type: application/json
+
+{
+  "name": "Alimentação",
+  "type": "expense"
+}
+
+###
+
+# @name update-category
+PUT {{BASE_URL}}/categories/REPLACE_WITH_UUID
+Content-Type: application/json
+
+{
+  "name": "Alimentação Atualizado",
+  "type": "expense"
+}
+
+###
+
+# @name delete-category
+DELETE {{BASE_URL}}/categories/REPLACE_WITH_UUID
+
+
+### ===================== CREDIT CARDS =====================
+
+# @name get-credit-cards
+GET {{BASE_URL}}/credit-cards
+
+###
+
+# @name create-credit-card
+POST {{BASE_URL}}/credit-cards
+Content-Type: application/json
+
+{
+  "name": "Meu Cartão",
+  "bank": "Nubank",
+  "closingDay": 15,
+  "paymentDay": 22
+}
+
+###
+
+# @name update-credit-card
+PUT {{BASE_URL}}/credit-cards/REPLACE_WITH_UUID
+Content-Type: application/json
+
+{
+  "name": "Meu Cartão Atualizado",
+  "bank": "Itaú",
+  "closingDay": 10,
+  "paymentDay": 18
+}
+
+###
+
+# @name delete-credit-card
+DELETE {{BASE_URL}}/credit-cards/REPLACE_WITH_UUID
+
+
+### ===================== TRANSACTIONS =====================
+
+# @name get-transactions
+GET {{BASE_URL}}/transactions?startDate=2026-01-01&endDate=2026-03-31&page=1&limit=50
+
+###
+
+# @name get-transactions-filtered
+GET {{BASE_URL}}/transactions?startDate=2026-01-01&endDate=2026-03-31&type=expense&categoryId=CATEGORY_UUID&page=1&limit=20
+
+###
+
+# @name create-transaction
+POST {{BASE_URL}}/transactions
+Content-Type: application/json
+
+{
+  "description": "Supermercado",
+  "amount": 150.50,
+  "type": "expense",
+  "date": "2026-01-15T00:00:00.000Z",
+  "categoryId": "CATEGORY_UUID",
+  "aiSuggest": false
+}
+
+###
+
+# @name update-transaction
+PUT {{BASE_URL}}/transactions/REPLACE_WITH_UUID
+Content-Type: application/json
+
+{
+  "description": "Supermercado Atualizado",
+  "amount": 200.00,
+  "type": "expense",
+  "date": "2026-01-15",
+  "categoryId": "CATEGORY_UUID"
+}
+
+###
+
+# @name delete-transaction
+DELETE {{BASE_URL}}/transactions/REPLACE_WITH_UUID
+
+
+### ===================== DASHBOARD =====================
+
+# @name get-dashboard
+GET {{BASE_URL}}/dashboard?startDate=2026-01-01&endDate=2026-03-31
+
+
+### ===================== API DOCS =====================
+
+# @name api-docs
+GET {{BASE_URL}}/docs
