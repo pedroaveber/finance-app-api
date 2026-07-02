@@ -8,6 +8,10 @@ import * as schema from '../database/drizzle/schemas'
 
 export const auth = betterAuth({
   baseURL: env.BETTER_AUTH_URL,
+  trustedOrigins: [env.CLIENT_ORIGIN],
+  advanced: {
+    disableCSRFCheck: env.NODE_ENV !== 'production',
+  },
   database: drizzleAdapter(db, {
     provider: 'pg',
     usePlural: true,

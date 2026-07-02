@@ -201,7 +201,7 @@ GET {{BASE_URL}}/categories?type=expense
 ###
 
 # @name check-category
-GET {{BASE_URL}}/categories/check?type=expense&name=Alimentacao
+GET {{BASE_URL}}/categories/check?type=expense&name=Gasolina
 
 ###
 

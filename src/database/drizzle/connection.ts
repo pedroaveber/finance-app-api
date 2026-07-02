@@ -1,3 +1,4 @@
+import { instrumentDrizzleClient } from '@kubiks/otel-drizzle'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import { Pool } from 'pg'
 import { env } from '@/env'
@@ -11,3 +12,5 @@ export const db = drizzle(pool, {
   schema,
   casing: 'snake_case',
 })
+
+instrumentDrizzleClient(db, { dbSystem: 'postgresql' })
