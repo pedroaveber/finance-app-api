@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretest": "dotenv -e .env.test drizzle-kit migrate",
+    "test": "dotenv -e .env.test vitest run",
+    "test:watch": "dotenv -e .env.test vitest",
     "dev": "tsx watch --env-file=.env src/server.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
@@ -22,11 +24,17 @@
   "packageManager": "pnpm@10.28.2",
   "devDependencies": {
     "@biomejs/biome": "^2.5.2",
+    "@faker-js/faker": "^10.5.0",
     "@types/pg": "^8.20.0",
+    "@types/supertest": "^7.2.0",
+    "dotenv-cli": "^11.0.0",
     "drizzle-kit": "^0.31.10",
+    "supertest": "^7.2.2",
     "tsup": "^8.5.1",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite-tsconfig-paths": "^6.1.1",
+    "vitest": "^4.1.9"
   },
   "dependencies": {
     "@ai-sdk/google": "^4.0.6",

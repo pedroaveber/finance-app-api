@@ -22,13 +22,6 @@
       "when": 1782950523958,
       "tag": "0002_previous_annihilus",
       "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1782958665740,
-      "tag": "0003_brainy_husk",
-      "breakpoints": true
     }
   ]
 }

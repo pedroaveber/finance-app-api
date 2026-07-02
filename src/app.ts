@@ -13,16 +13,19 @@ import { errorHandler } from './http/plugins/error-handler'
 import { appRoutes } from './http/routes/app-routes'
 
 const app = fastify({
-  logger: {
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname',
-      },
-    },
-  },
+  logger:
+    env.NODE_ENV === 'development'
+      ? {
+          transport: {
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              translateTime: 'HH:MM:ss Z',
+              ignore: 'pid,hostname',
+            },
+          },
+        }
+      : false,
 })
 
 app.setValidatorCompiler(validatorCompiler)

@@ -30,7 +30,9 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
     async sendVerificationEmail({ user, url }) {
-      console.log('Send verification email to', user.email, 'with url', url)
+      if (env.NODE_ENV !== 'test') {
+        console.log('Send verification email to', user.email, 'with url', url)
+      }
     },
   },
   socialProviders: {
