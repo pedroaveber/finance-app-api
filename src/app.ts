@@ -3,6 +3,7 @@ import { fastifySwagger } from '@fastify/swagger'
 import ScalarApiReference from '@scalar/fastify-api-reference'
 import { fastify } from 'fastify'
 import {
+  jsonSchemaTransform,
   serializerCompiler,
   validatorCompiler,
 } from 'fastify-type-provider-zod'
@@ -39,6 +40,7 @@ app.register(fastifyCors, {
 })
 
 app.register(fastifySwagger, {
+  transform: jsonSchemaTransform,
   openapi: {
     openapi: '3.1.0',
     info: {
@@ -52,12 +54,6 @@ app.register(fastifySwagger, {
         description: 'Development server',
       },
     ],
-  },
-  transform: ({ schema, url }) => {
-    if (url === '/api/auth/*') {
-      return { schema, url: '/api/auth/{path+}' }
-    }
-    return { schema, url }
   },
 })
 
