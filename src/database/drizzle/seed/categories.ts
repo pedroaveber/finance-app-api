@@ -65,7 +65,11 @@ async function seedCategories() {
   console.log(`Seeded ${toInsert.length} default categories.`)
 }
 
-seedCategories().catch((error) => {
-  console.error('Failed to seed categories:', error)
-  process.exit(1)
-})
+seedCategories()
+  .then(() => {
+    process.exit()
+  })
+  .catch((error) => {
+    console.error('Failed to seed categories:', error)
+    process.exit(1)
+  })

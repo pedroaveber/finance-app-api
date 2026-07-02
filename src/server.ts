@@ -1,8 +1,13 @@
-import './lib/open-telemetry'
+import './lib/otel'
 
 import { app } from './app'
+import { env } from './env'
 
-app.listen({
-  port: 3333,
-  host: '0.0.0.0',
-})
+app
+  .listen({
+    port: env.PORT,
+    host: env.HOST,
+  })
+  .then(() => {
+    console.log(`🔥 HTTP Server Running on port `.concat(env.PORT.toString()))
+  })

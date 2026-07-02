@@ -1,6 +1,6 @@
 .env
-.env.test
 dist
 node_modules
 coverage
 html
+data/
