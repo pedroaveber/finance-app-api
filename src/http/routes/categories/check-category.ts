@@ -45,6 +45,7 @@ export const checkCategory: FastifyPluginCallbackZod = (app) => {
       const similarCategories = await checkSimilarCategories(
         name,
         existingCategories,
+        request.userId,
       )
 
       const status = similarCategories.length > 0 ? 'warning' : 'ok'

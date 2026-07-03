@@ -3,12 +3,15 @@ import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import { env } from '@/env'
 import { BadRequestException } from '@/http/exceptions'
+import { logAiUsage } from './track-usage'
+
+const MODEL = 'gemini-2.5-flash-lite'
 
 const google = createGoogle({
   apiKey: env.GEMINI_API_KEY,
 })
 
-const model = google('gemini-2.5-flash-lite')
+const model = google(MODEL)
 
 export type ParseBankSlipResponse = {
   amount: number
@@ -20,9 +23,12 @@ export type ParseBankSlipResponse = {
 export async function parseBankSlip(
   pdfBuffer: Buffer,
   availableCategories: string[],
+  userId: string,
 ): Promise<ParseBankSlipResponse> {
+  const startTime = performance.now()
+
   try {
-    const { output } = await generateText({
+    const { output, usage } = await generateText({
       model,
       output: Output.object({
         schema: z.object({
@@ -57,6 +63,15 @@ Available categories: ${JSON.stringify(availableCategories)}`,
           ],
         },
       ],
+    })
+
+    await logAiUsage({
+      userId,
+      model: MODEL,
+      route: 'import-bank-slip',
+      inputTokens: usage.inputTokens ?? 0,
+      outputTokens: usage.outputTokens ?? 0,
+      durationMs: Math.round(performance.now() - startTime),
     })
 
     return output

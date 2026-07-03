@@ -8,6 +8,13 @@
       "when": 1783013269502,
       "tag": "0000_luxuriant_miss_america",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1783097617638,
+      "tag": "0001_yummy_kitty_pryde",
+      "breakpoints": true
     }
   ]
 }

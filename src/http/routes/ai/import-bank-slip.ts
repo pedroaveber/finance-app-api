@@ -65,6 +65,7 @@ export const importBankSlip: FastifyPluginCallbackZod = (app) => {
       const result = await parseBankSlip(
         buffer,
         categories.map((c) => c.name),
+        request.userId,
       )
 
       const suggestedCategory = result.suggestedCategory
