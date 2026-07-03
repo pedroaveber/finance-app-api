@@ -337,6 +337,19 @@ Content-Type: application/pdf
 < /Users/pedroveber/www/personal/home-expenses/api/tmp/Supergasbras_4402707_20260715_1_0202.PDF
 ------boundary--
 
+###
+
+# @name import-credit-card-invoice
+POST {{BASE_URL}}/ai/import-credit-card-invoice
+Content-Type: multipart/form-data; boundary=----boundary
+
+------boundary
+Content-Disposition: form-data; name="file"; filename="Nubank_2026-07-05.pdf"
+Content-Type: application/pdf
+
+< /Users/pedroveber/www/personal/home-expenses/api/tmp/Nubank_2026-07-05.pdf
+------boundary--
+
 
 ### ===================== API DOCS =====================
 

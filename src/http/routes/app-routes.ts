@@ -1,6 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import { getAiUsage } from './ai/get-ai-usage'
 import { importBankSlip } from './ai/import-bank-slip'
+import { importCreditCardInvoice } from './ai/import-credit-card-invoice'
 import { checkCategory } from './categories/check-category'
 import { createCategory } from './categories/create-category'
 import { deleteCategory } from './categories/delete-category'
@@ -26,6 +27,7 @@ export const appRoutes = (app: FastifyInstance) => {
   app.register(deleteCategory)
   app.register(getAiUsage)
   app.register(importBankSlip)
+  app.register(importCreditCardInvoice)
   app.register(getCreditCards)
   app.register(createCreditCard)
   app.register(updateCreditCard)

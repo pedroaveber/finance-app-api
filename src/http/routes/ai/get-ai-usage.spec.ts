@@ -212,9 +212,7 @@ describe('GET /ai/usage', () => {
       .set('Cookie', cookie)
 
     expect(response.statusCode).toEqual(400)
-    expect(response.body.message).toEqual(
-      'O período não pode exceder 90 dias',
-    )
+    expect(response.body.message).toEqual('O período não pode exceder 90 dias')
   })
 
   it('should default endDate to today when only startDate is provided', async () => {
