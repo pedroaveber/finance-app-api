@@ -14,6 +14,7 @@ import { updateCreditCard } from './credit-cards/update-credit-card'
 import { getDashboardRoute } from './dashboard/get-dashboard'
 import { healthCheck } from './health/health-check'
 import { createTransaction } from './transactions/create-transaction'
+import { createTransactionBatch } from './transactions/create-transaction-batch'
 import { deleteTransaction } from './transactions/delete-transaction'
 import { getTransactions } from './transactions/get-transactions'
 import { updateTransaction } from './transactions/update-transaction'
@@ -35,6 +36,7 @@ export const appRoutes = (app: FastifyInstance) => {
   app.register(getDashboardRoute)
   app.register(getTransactions)
   app.register(createTransaction)
+  app.register(createTransactionBatch)
   app.register(updateTransaction)
   app.register(deleteTransaction)
 }

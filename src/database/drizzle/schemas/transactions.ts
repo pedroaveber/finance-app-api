@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { date, numeric, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { date, jsonb, numeric, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { users } from './auth'
 import { categories } from './categories'
 import { creditCards } from './credit-cards'
@@ -21,6 +21,8 @@ export const transactions = pgTable('transactions', {
   amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
   type: text('type', { enum: ['income', 'expense'] }).notNull(),
   date: date('date').notNull(),
+  installment: jsonb('installment').$type<{ current: number; total: number } | null>(),
+  nickname: text('nickname'),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 })
 

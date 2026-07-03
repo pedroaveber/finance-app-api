@@ -317,6 +317,36 @@ Content-Type: application/json
 # @name delete-transaction
 DELETE {{BASE_URL}}/transactions/REPLACE_WITH_UUID
 
+###
+
+# @name create-transaction-batch
+POST {{BASE_URL}}/transactions/batch
+Content-Type: application/json
+
+{
+  "creditCardId": "CREDIT_CARD_UUID",
+  "transactions": [
+    {
+      "description": "Supermercado",
+      "type": "expense",
+      "categoryId": "CATEGORY_UUID",
+      "amount": 250.50,
+      "createdAt": "2026-01-15",
+      "installment": null,
+      "nickname": null
+    },
+    {
+      "description": "Gasolina",
+      "type": "expense",
+      "categoryId": "CATEGORY_UUID",
+      "amount": 180.00,
+      "createdAt": "2026-01-16",
+      "installment": { "current": 1, "total": 3 },
+      "nickname": "Posto Shell"
+    }
+  ]
+}
+
 
 ### ===================== DASHBOARD =====================
 

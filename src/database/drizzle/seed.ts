@@ -160,6 +160,7 @@ async function main() {
       date: '2026-06-10',
       categoryId: johnCatIds.get('Restaurante')!,
       creditCardId: johnCardIds.get('Nubank'),
+      installment: { current: 1, total: 3 },
     },
     {
       userId: johnId,
@@ -169,6 +170,7 @@ async function main() {
       date: '2026-06-07',
       categoryId: johnCatIds.get('Mercado')!,
       creditCardId: johnCardIds.get('Inter'),
+      installment: { current: 2, total: 2 },
     },
     {
       userId: johnId,
@@ -194,6 +196,8 @@ async function main() {
       date: '2026-06-15',
       categoryId: johnCatIds.get('Combustível')!,
       creditCardId: johnCardIds.get('Nubank'),
+      installment: { current: 3, total: 3 },
+      nickname: 'Posto Ipiranga',
     },
     {
       userId: johnId,
@@ -203,6 +207,7 @@ async function main() {
       date: '2026-06-05',
       categoryId: johnCatIds.get('Streaming')!,
       creditCardId: johnCardIds.get('Nubank'),
+      nickname: 'Streaming',
     },
     {
       userId: johnId,
@@ -263,6 +268,46 @@ async function main() {
     },
   ])
 
+  console.log("Creating John's invoice uploads...")
+  const [johnInvoiceUpload] = await db
+    .insert(schema.invoiceUploads)
+    .values({
+      userId: johnId,
+      creditCardId: johnCardIds.get('Nubank')!,
+      period: '2026-06',
+      fileHash: crypto.randomUUID(),
+      status: 'pending',
+    })
+    .returning({ id: schema.invoiceUploads.id })
+
+  console.log("Creating John's pending invoice transactions...")
+  await db.insert(schema.pendingInvoiceTransactions).values([
+    {
+      invoiceUploadId: johnInvoiceUpload.id,
+      description: 'Amazon Prime',
+      amount: '19.90',
+      date: '2026-06-03',
+      suggestedCategoryId: johnCatIds.get('Streaming')!,
+      status: 'pending',
+    },
+    {
+      invoiceUploadId: johnInvoiceUpload.id,
+      description: 'Uber',
+      amount: '34.50',
+      date: '2026-06-07',
+      suggestedCategoryId: defaultCatIds.get('Transporte')!,
+      status: 'pending',
+    },
+    {
+      invoiceUploadId: johnInvoiceUpload.id,
+      description: 'iFood',
+      amount: '42.00',
+      date: '2026-06-12',
+      suggestedCategoryId: johnCatIds.get('Restaurante')!,
+      status: 'pending',
+    },
+  ])
+
   console.log(
     'Seeding additional users with categories, credit cards, and transactions...',
   )
@@ -287,6 +332,10 @@ async function main() {
           { weight: 0.3, count: [15, 25] },
           { weight: 0.4, count: [30, 40] },
           { weight: 0.3, count: [50, 70] },
+        ],
+        invoiceUploads: [
+          { weight: 0.5, count: [1, 2] },
+          { weight: 0.5, count: [3, 5] },
         ],
       },
     },
@@ -355,6 +404,42 @@ async function main() {
           minDate: '2024-01-01',
           maxDate: '2026-07-03',
         }),
+        installment: funcs.default({ defaultValue: null }),
+        nickname: funcs.default({ defaultValue: null }),
+      },
+    },
+    invoiceUploads: {
+      columns: {
+        period: funcs.valuesFromArray({
+          values: [
+            '2026-01',
+            '2026-02',
+            '2026-03',
+            '2026-04',
+            '2026-05',
+            '2026-06',
+          ],
+        }),
+        fileHash: funcs.string(),
+        status: funcs.default({ defaultValue: 'pending' }),
+      },
+      with: {
+        pendingInvoiceTransactions: [
+          { weight: 0.4, count: [2, 4] },
+          { weight: 0.4, count: [5, 8] },
+          { weight: 0.2, count: [9, 15] },
+        ],
+      },
+    },
+    pendingInvoiceTransactions: {
+      columns: {
+        description: funcs.loremIpsum({ sentencesCount: 1 }),
+        amount: funcs.number({ minValue: 10, maxValue: 2000, precision: 2 }),
+        date: funcs.date({
+          minDate: '2026-01-01',
+          maxDate: '2026-07-03',
+        }),
+        status: funcs.default({ defaultValue: 'pending' }),
       },
     },
   }))
