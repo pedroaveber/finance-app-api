@@ -7,6 +7,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().optional().default(3333),
   HOST: z.string().optional().default('0.0.0.0'),
   DATABASE_URL: z.url(),
+  REDIS_URL: z.string().default('redis://localhost:6379'),
   AUTH_SECRET: z.string().min(1),
   BETTER_AUTH_URL: z.url().default('http://localhost:3333'),
   CLIENT_ORIGIN: z.url().default('http://localhost:3000'),

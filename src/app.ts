@@ -1,3 +1,6 @@
+import { createBullBoard } from '@bull-board/api'
+import { BullMQAdapter } from '@bull-board/api/bullMQAdapter'
+import { FastifyAdapter } from '@bull-board/fastify'
 import { fastifyCors } from '@fastify/cors'
 import fastifyMultipart from '@fastify/multipart'
 import { fastifySwagger } from '@fastify/swagger'
@@ -13,6 +16,7 @@ import { authRoutes } from '@/lib/auth'
 import { authMiddleware } from './http/plugins/auth'
 import { errorHandler } from './http/plugins/error-handler'
 import { appRoutes } from './http/routes/app-routes'
+import { aiProcessingQueue, aiUsageQueue } from './jobs/queues'
 
 const app = fastify({
   logger:
@@ -70,6 +74,25 @@ app.register(ScalarApiReference, {
     theme: 'bluePlanet',
   },
 })
+
+const serverAdapter = new FastifyAdapter()
+
+serverAdapter.setBasePath('/admin/queues')
+
+createBullBoard({
+  queues: [
+    new BullMQAdapter(aiUsageQueue),
+    new BullMQAdapter(aiProcessingQueue),
+  ],
+  serverAdapter,
+  options: {
+    uiConfig: {
+      boardTitle: 'Home Expenses - Filas',
+    },
+  },
+})
+
+app.register(serverAdapter.registerPlugin(), { prefix: '/admin/queues' })
 
 app.setErrorHandler(errorHandler)
 

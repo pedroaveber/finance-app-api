@@ -15,6 +15,7 @@ export const authMiddleware = async (app: FastifyInstance) => {
     if (
       url.startsWith('/api/auth') ||
       url.startsWith('/docs') ||
+      url.startsWith('/admin/queues') ||
       url === '/health-check'
     ) {
       return
