@@ -324,6 +324,20 @@ DELETE {{BASE_URL}}/transactions/REPLACE_WITH_UUID
 GET {{BASE_URL}}/dashboard?startDate=2026-01-01&endDate=2026-03-31
 
 
+### ===================== AI =====================
+
+# @name import-bank-slip
+POST {{BASE_URL}}/ai/import-bank-slip
+Content-Type: multipart/form-data; boundary=----boundary
+
+------boundary
+Content-Disposition: form-data; name="file"; filename="Supergasbras_4402707_20260715_1_0202.PDF"
+Content-Type: application/pdf
+
+< /Users/pedroveber/www/personal/home-expenses/api/tmp/Supergasbras_4402707_20260715_1_0202.PDF
+------boundary--
+
+
 ### ===================== API DOCS =====================
 
 # @name api-docs

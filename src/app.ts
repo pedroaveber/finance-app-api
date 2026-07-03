@@ -1,4 +1,5 @@
 import { fastifyCors } from '@fastify/cors'
+import fastifyMultipart from '@fastify/multipart'
 import { fastifySwagger } from '@fastify/swagger'
 import ScalarApiReference from '@scalar/fastify-api-reference'
 import { fastify } from 'fastify'
@@ -37,6 +38,12 @@ app.register(fastifyCors, {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
+})
+
+app.register(fastifyMultipart, {
+  limits: {
+    fileSize: 10 * 1024 * 1024,
+  },
 })
 
 app.register(fastifySwagger, {

@@ -20,6 +20,7 @@ const envSchema = z.object({
   OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: z.string(),
   OTEL_METRIC_EXPORT_INTERVAL: z.coerce.number().optional().default(5_000),
   OTEL_METRIC_EXPORT_TIMEOUT: z.coerce.number().optional().default(5_000),
+  RESEND_API_KEY: z.string().optional(),
 })
 
 export const env = envSchema.parse(process.env)

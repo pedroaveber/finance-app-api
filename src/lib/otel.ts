@@ -1,16 +1,11 @@
-import { diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api'
-
-import { NodeSDK } from '@opentelemetry/sdk-node'
-
 import { FastifyOtelInstrumentation } from '@fastify/otel'
+import { DiagConsoleLogger, DiagLogLevel, diag } from '@opentelemetry/api'
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node'
-
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
-
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-grpc'
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-grpc'
-
 import { CompressionAlgorithm } from '@opentelemetry/otlp-exporter-base'
+import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics'
+import { NodeSDK } from '@opentelemetry/sdk-node'
 import { env } from '@/env'
 
 diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.ERROR)
