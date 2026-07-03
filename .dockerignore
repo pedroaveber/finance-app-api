@@ -1,0 +1,11 @@
+node_modules
+dist
+.git
+.gitignore
+.env
+.env.test
+*.md
+.gitkeep
+data
+tmp
+node_modules
