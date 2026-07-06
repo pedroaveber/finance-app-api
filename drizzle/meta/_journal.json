@@ -22,6 +22,20 @@
       "when": 1783105296573,
       "tag": "0002_heavy_speedball",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1783357029861,
+      "tag": "0003_careless_mole_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1783357942610,
+      "tag": "0004_chief_archangel",
+      "breakpoints": true
     }
   ]
 }

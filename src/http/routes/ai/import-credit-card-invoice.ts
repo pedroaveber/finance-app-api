@@ -1,22 +1,11 @@
+import { createHash } from 'node:crypto'
 import { and, eq, isNull, or } from 'drizzle-orm'
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { db } from '@/database/drizzle/connection'
 import * as schema from '@/database/drizzle/schemas'
 import { BadRequestException } from '@/http/exceptions'
-import { parseCreditCardInvoice } from '@/services/ai/import-credit-card-invoice'
-
-const invoiceItemResponse = z.object({
-  description: z.string(),
-  amount: z.number(),
-  installment: z.string().nullable(),
-  suggestedCategory: z
-    .object({
-      id: z.string(),
-      name: z.string(),
-    })
-    .nullable(),
-})
+import { creditCardImportQueue } from '@/jobs'
 
 export const importCreditCardInvoice: FastifyPluginCallbackZod = (app) => {
   app.post(
@@ -25,30 +14,63 @@ export const importCreditCardInvoice: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['AI'],
         summary: 'Import a credit card invoice PDF and extract purchases',
+        operationId: 'importCreditCardInvoice',
         consumes: ['multipart/form-data'],
         response: {
-          200: z.object({
-            items: z.array(invoiceItemResponse),
+          202: z.object({
+            batchId: z.string(),
+            jobId: z.string(),
           }),
         },
       },
     },
     async (request, reply) => {
-      const file = await request.file()
+      const parts = request.parts()
 
-      if (!file) {
+      let pdfBuffer: Buffer | null = null
+      let creditCardId: string | null = null
+
+      for await (const part of parts) {
+        if (part.type === 'file') {
+          if (part.mimetype !== 'application/pdf') {
+            throw new BadRequestException('O arquivo deve ser um PDF')
+          }
+          const chunks: Buffer[] = []
+          for await (const chunk of part.file) {
+            chunks.push(chunk)
+          }
+          pdfBuffer = Buffer.concat(chunks)
+        } else if (part.type === 'field' && part.fieldname === 'creditCardId') {
+          creditCardId = part.value as string
+        }
+      }
+
+      if (!pdfBuffer) {
         throw new BadRequestException('Nenhum arquivo enviado')
       }
 
-      if (file.mimetype !== 'application/pdf') {
-        throw new BadRequestException('O arquivo deve ser um PDF')
+      if (!creditCardId) {
+        throw new BadRequestException('creditCardId é obrigatório')
       }
 
-      const chunks: Buffer[] = []
-      for await (const chunk of file.file) {
-        chunks.push(chunk)
+      const fileHash = createHash('sha256').update(pdfBuffer).digest('hex')
+
+      const existing = await db
+        .select({ id: schema.batchTransactions.id })
+        .from(schema.batchTransactions)
+        .where(
+          and(
+            eq(schema.batchTransactions.fileHash, fileHash),
+            eq(schema.batchTransactions.userId, request.userId),
+          ),
+        )
+        .limit(1)
+
+      if (existing.length > 0) {
+        throw new BadRequestException(
+          'Esta fatura já foi importada anteriormente',
+        )
       }
-      const buffer = Buffer.concat(chunks)
 
       const categories = await db
         .select({
@@ -66,29 +88,36 @@ export const importCreditCardInvoice: FastifyPluginCallbackZod = (app) => {
           ),
         )
 
-      const result = await parseCreditCardInvoice(
-        buffer,
-        categories.map((c) => c.name),
-        request.userId,
+      const [batchTransaction] = await db
+        .insert(schema.batchTransactions)
+        .values({
+          jobId: '',
+          userId: request.userId,
+          creditCardId,
+          fileHash,
+        })
+        .returning({ id: schema.batchTransactions.id })
+
+      const job = await creditCardImportQueue.add(
+        'import-credit-card-invoice',
+        {
+          pdfBuffer: Array.from(pdfBuffer),
+          userId: request.userId,
+          creditCardId,
+          categories: categories.map((c) => ({ id: c.id, name: c.name })),
+          batchTransactionId: batchTransaction.id,
+        },
       )
 
-      const items = result.items.map((item) => {
-        const matchedCategory = item.suggestedCategory
-          ? categories.find(
-              (c) =>
-                c.name.toLowerCase() === item.suggestedCategory?.toLowerCase(),
-            )
-          : null
+      await db
+        .update(schema.batchTransactions)
+        .set({ jobId: job.id ?? '' })
+        .where(eq(schema.batchTransactions.id, batchTransaction.id))
 
-        return {
-          description: item.description,
-          amount: item.amount,
-          installment: item.installment,
-          suggestedCategory: matchedCategory ?? null,
-        }
+      return reply.status(202).send({
+        batchId: batchTransaction.id,
+        jobId: job.id ?? '',
       })
-
-      return reply.status(200).send({ items })
     },
   )
 }

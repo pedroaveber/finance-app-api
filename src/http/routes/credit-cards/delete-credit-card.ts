@@ -15,6 +15,7 @@ export const deleteCreditCard: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Credit Cards'],
         summary: 'Delete credit card',
+        operationId: 'deleteCreditCard',
         params: z.object({
           id: z.string(),
         }),

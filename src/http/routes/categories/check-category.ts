@@ -12,6 +12,7 @@ export const checkCategory: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Categories'],
         summary: 'Check for similar categories before creating',
+        operationId: 'checkCategory',
         querystring: z.object({
           name: z.string().min(1),
           type: z.enum(['income', 'expense']),

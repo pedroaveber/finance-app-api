@@ -12,6 +12,7 @@ export const createCreditCard: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Credit Cards'],
         summary: 'Create credit card',
+        operationId: 'createCreditCard',
         body: z.object({
           name: z.string().min(1),
           bank: z.string().min(1),

@@ -9,6 +9,7 @@ export const healthCheck: FastifyPluginCallbackZod = (app) => {
         tags: ['Health Check'],
         summary: 'Health check endpoint',
         description: 'Check if the server is running',
+        operationId: 'healthCheck',
         response: {
           200: z.object({
             message: z.literal('OK'),

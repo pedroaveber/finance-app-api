@@ -10,6 +10,7 @@ export const createCategory: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Categories'],
         summary: 'Create custom category',
+        operationId: 'createCategory',
         body: z.object({
           name: z.string().min(1),
           type: z.enum(['income', 'expense']),

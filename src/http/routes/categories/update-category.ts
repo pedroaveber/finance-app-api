@@ -12,6 +12,7 @@ export const updateCategory: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Categories'],
         summary: 'Update custom category',
+        operationId: 'updateCategory',
         params: z.object({
           id: z.string(),
         }),

@@ -11,11 +11,15 @@ import { createCreditCard } from './credit-cards/create-credit-card'
 import { deleteCreditCard } from './credit-cards/delete-credit-card'
 import { getCreditCards } from './credit-cards/get-credit-cards'
 import { updateCreditCard } from './credit-cards/update-credit-card'
-import { getDashboardRoute } from './dashboard/get-dashboard'
+import { getDashboard } from './dashboard/get-dashboard'
 import { healthCheck } from './health/health-check'
+import { getNotifications } from './notifications/get-notifications'
+import { notificationStream } from './notifications/get-notifications-stream'
+import { readNotification } from './notifications/read-notification'
 import { createTransaction } from './transactions/create-transaction'
 import { createTransactionBatch } from './transactions/create-transaction-batch'
 import { deleteTransaction } from './transactions/delete-transaction'
+import { getBatchTransaction } from './transactions/get-batch-transaction'
 import { getTransactions } from './transactions/get-transactions'
 import { updateTransaction } from './transactions/update-transaction'
 
@@ -33,10 +37,14 @@ export const appRoutes = (app: FastifyInstance) => {
   app.register(createCreditCard)
   app.register(updateCreditCard)
   app.register(deleteCreditCard)
-  app.register(getDashboardRoute)
+  app.register(getDashboard)
+  app.register(getBatchTransaction)
   app.register(getTransactions)
   app.register(createTransaction)
   app.register(createTransactionBatch)
   app.register(updateTransaction)
   app.register(deleteTransaction)
+  app.register(getNotifications)
+  app.register(readNotification)
+  app.register(notificationStream)
 }

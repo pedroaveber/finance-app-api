@@ -10,13 +10,14 @@ import {
 } from '@/database/drizzle/schemas'
 import { BadRequestException } from '@/http/exceptions'
 
-export const getDashboardRoute: FastifyPluginCallbackZod = (app) => {
+export const getDashboard: FastifyPluginCallbackZod = (app) => {
   app.get(
     '/dashboard',
     {
       schema: {
         tags: ['Dashboard'],
         summary: 'Get financial summary for a period',
+        operationId: 'getDashboard',
         querystring: z.object({
           startDate: z.iso.date(),
           endDate: z.iso.date(),

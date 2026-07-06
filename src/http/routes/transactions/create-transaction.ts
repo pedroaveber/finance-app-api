@@ -10,6 +10,7 @@ export const createTransaction: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Transactions'],
         summary: 'Create transaction',
+        operationId: 'createTransaction',
         body: z.object({
           description: z.string().min(1),
           amount: z.number().positive(),

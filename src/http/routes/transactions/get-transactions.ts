@@ -13,6 +13,7 @@ export const getTransactions: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Transactions'],
         summary: 'List transactions',
+        operationId: 'getTransactions',
         querystring: z.object({
           startDate: z.iso.date(),
           endDate: z.iso.date(),

@@ -1,9 +1,10 @@
 import './lib/otel'
 
 import { app } from './app'
+import { closeRedis } from './database/redis'
 import { env } from './env'
 import { aiUsageWorker } from './jobs/workers/ai-usage'
-import { closeRedis } from './lib/queue'
+import { creditCardImportWorker } from './jobs/workers/credit-card-import'
 
 const server = app
 
@@ -18,6 +19,7 @@ server
 
 async function shutdown() {
   await aiUsageWorker.close()
+  await creditCardImportWorker.close()
   await closeRedis()
   process.exit(0)
 }

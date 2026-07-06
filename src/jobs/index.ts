@@ -1,1 +1,6 @@
-export { aiProcessingQueue, aiUsageQueue, QUEUE_NAMES } from './queues'
+export {
+  aiProcessingQueue,
+  aiUsageQueue,
+  creditCardImportQueue,
+  QUEUE_NAMES,
+} from './queues'

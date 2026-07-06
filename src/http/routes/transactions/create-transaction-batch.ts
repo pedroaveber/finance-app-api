@@ -10,6 +10,7 @@ export const createTransactionBatch: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Transactions'],
         summary: 'Create transactions in batch',
+        operationId: 'createTransactionBatch',
         body: z.object({
           creditCardId: z.string(),
           transactions: z.array(

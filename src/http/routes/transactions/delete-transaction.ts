@@ -12,6 +12,7 @@ export const deleteTransaction: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Transactions'],
         summary: 'Delete transaction',
+        operationId: 'deleteTransaction',
         params: z.object({
           id: z.string(),
         }),

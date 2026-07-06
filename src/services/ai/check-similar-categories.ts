@@ -67,7 +67,8 @@ ${JSON.stringify(existingCategories.map((c) => ({ id: c.id, name: c.name })))}`,
 
     const matchedIds = new Set(output.similarIds)
     return existingCategories.filter((c) => matchedIds.has(c.id))
-  } catch {
+  } catch (err) {
+    console.log(err)
     throw new BadRequestException('Serviço não disponível no momento')
   }
 }

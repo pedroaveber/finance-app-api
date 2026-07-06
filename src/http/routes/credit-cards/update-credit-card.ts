@@ -14,6 +14,7 @@ export const updateCreditCard: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Credit Cards'],
         summary: 'Update credit card',
+        operationId: 'updateCreditCard',
         params: z.object({
           id: z.string(),
         }),

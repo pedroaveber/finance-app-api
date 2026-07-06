@@ -13,6 +13,7 @@ export const getAiUsage: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['AI'],
         summary: 'Get AI usage data for the authenticated user',
+        operationId: 'getAiUsage',
         querystring: z.object({
           startDate: z.iso.date().optional(),
           endDate: z.iso.date().optional(),

@@ -12,6 +12,7 @@ export const updateTransaction: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Transactions'],
         summary: 'Update transaction',
+        operationId: 'updateTransaction',
         params: z.object({
           id: z.string(),
         }),

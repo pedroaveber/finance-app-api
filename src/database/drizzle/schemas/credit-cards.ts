@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm'
 import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { users } from './auth'
+import { batchTransactions } from './batch-transactions'
 import { invoiceUploads } from './invoice-uploads'
 import { transactions } from './transactions'
 
@@ -29,4 +30,5 @@ export const creditCardsRelations = relations(creditCards, ({ one, many }) => ({
   }),
   transactions: many(transactions),
   invoiceUploads: many(invoiceUploads),
+  batchTransactions: many(batchTransactions),
 }))

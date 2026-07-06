@@ -1,0 +1,1730 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Home Expenses API",
+    "description": "API for managing personal home expenses",
+    "version": "1.0.0"
+  },
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/health-check": {
+      "get": {
+        "operationId": "healthCheck",
+        "summary": "Health check endpoint",
+        "tags": [
+          "Health Check"
+        ],
+        "description": "Check if the server is running",
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "enum": [
+                        "OK"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "get": {
+        "operationId": "getCategories",
+        "summary": "List categories",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "income",
+                "expense"
+              ]
+            },
+            "in": "query",
+            "name": "type",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "userId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "income",
+                              "expense"
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "userId",
+                          "name",
+                          "type",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCategory",
+        "summary": "Create custom category",
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "type"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/check": {
+      "get": {
+        "operationId": "checkCategory",
+        "summary": "Check for similar categories before creating",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            },
+            "in": "query",
+            "name": "name",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "income",
+                "expense"
+              ]
+            },
+            "in": "query",
+            "name": "type",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok",
+                        "warning"
+                      ]
+                    },
+                    "similarCategories": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "income",
+                              "expense"
+                            ]
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "type"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "similarCategories"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{id}": {
+      "put": {
+        "operationId": "updateCategory",
+        "summary": "Update custom category",
+        "tags": [
+          "Categories"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ]
+                  },
+                  "icon": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCategory",
+        "summary": "Delete custom category",
+        "tags": [
+          "Categories"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/usage": {
+      "get": {
+        "operationId": "getAiUsage",
+        "summary": "Get AI usage data for the authenticated user",
+        "tags": [
+          "AI"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "in": "query",
+            "name": "startDate",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "in": "query",
+            "name": "endDate",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDate": {
+                      "type": "string"
+                    },
+                    "totals": {
+                      "type": "object",
+                      "properties": {
+                        "totalInputTokens": {
+                          "type": "number"
+                        },
+                        "totalOutputTokens": {
+                          "type": "number"
+                        },
+                        "totalTokens": {
+                          "type": "number"
+                        },
+                        "totalCalls": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "totalInputTokens",
+                        "totalOutputTokens",
+                        "totalTokens",
+                        "totalCalls"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "byRoute": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "route": {
+                            "type": "string"
+                          },
+                          "calls": {
+                            "type": "number"
+                          },
+                          "totalTokens": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "route",
+                          "calls",
+                          "totalTokens"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "recentLogs": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "model": {
+                            "type": "string"
+                          },
+                          "route": {
+                            "type": "string"
+                          },
+                          "inputTokens": {
+                            "type": "number"
+                          },
+                          "outputTokens": {
+                            "type": "number"
+                          },
+                          "totalTokens": {
+                            "type": "number"
+                          },
+                          "durationMs": {
+                            "anyOf": [
+                              {
+                                "type": "number"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "model",
+                          "route",
+                          "inputTokens",
+                          "outputTokens",
+                          "totalTokens",
+                          "durationMs",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "startDate",
+                    "endDate",
+                    "totals",
+                    "byRoute",
+                    "recentLogs"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/import-bank-slip": {
+      "post": {
+        "operationId": "importBankSlip",
+        "summary": "Import a bank slip PDF and extract payment data",
+        "tags": [
+          "AI"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "amount": {
+                      "type": "number"
+                    },
+                    "dueDate": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "suggestedCategory": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "id",
+                            "name"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "amount",
+                    "dueDate",
+                    "description",
+                    "suggestedCategory"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ai/import-credit-card-invoice": {
+      "post": {
+        "operationId": "importCreditCardInvoice",
+        "summary": "Import a credit card invoice PDF and extract purchases",
+        "tags": [
+          "AI"
+        ],
+        "responses": {
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "batchId": {
+                      "type": "string"
+                    },
+                    "jobId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "batchId",
+                    "jobId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-cards": {
+      "get": {
+        "operationId": "getCreditCards",
+        "summary": "List credit cards",
+        "tags": [
+          "Credit Cards"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "bank": {
+                            "type": "string"
+                          },
+                          "closingDay": {
+                            "type": "number"
+                          },
+                          "paymentDay": {
+                            "type": "number"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "bank",
+                          "closingDay",
+                          "paymentDay",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createCreditCard",
+        "summary": "Create credit card",
+        "tags": [
+          "Credit Cards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bank": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "closingDay": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  },
+                  "paymentDay": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  }
+                },
+                "required": [
+                  "name",
+                  "bank",
+                  "closingDay",
+                  "paymentDay"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/credit-cards/{id}": {
+      "put": {
+        "operationId": "updateCreditCard",
+        "summary": "Update credit card",
+        "tags": [
+          "Credit Cards"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "bank": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "closingDay": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  },
+                  "paymentDay": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 31
+                  }
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteCreditCard",
+        "summary": "Delete credit card",
+        "tags": [
+          "Credit Cards"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard": {
+      "get": {
+        "operationId": "getDashboard",
+        "summary": "Get financial summary for a period",
+        "tags": [
+          "Dashboard"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "in": "query",
+            "name": "startDate",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "in": "query",
+            "name": "endDate",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "startDate": {
+                      "type": "string"
+                    },
+                    "endDate": {
+                      "type": "string"
+                    },
+                    "totalIncome": {
+                      "type": "number"
+                    },
+                    "totalExpenses": {
+                      "type": "number"
+                    },
+                    "balance": {
+                      "type": "number"
+                    },
+                    "byCategory": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "total": {
+                            "type": "number"
+                          },
+                          "percentage": {
+                            "type": "number"
+                          },
+                          "transactionCount": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "category",
+                          "total",
+                          "percentage",
+                          "transactionCount"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "byCard": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "cardId": {
+                            "type": "string"
+                          },
+                          "cardName": {
+                            "type": "string"
+                          },
+                          "total": {
+                            "type": "number"
+                          },
+                          "percentage": {
+                            "type": "number"
+                          }
+                        },
+                        "required": [
+                          "cardId",
+                          "cardName",
+                          "total",
+                          "percentage"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "startDate",
+                    "endDate",
+                    "totalIncome",
+                    "totalExpenses",
+                    "balance",
+                    "byCategory",
+                    "byCard"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/batch/{id}": {
+      "get": {
+        "operationId": "getBatchTransaction",
+        "summary": "Get batch transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "jobId": {
+                      "type": "string"
+                    },
+                    "creditCardId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "fileHash": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "anyOf": [
+                        {},
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "userId": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "string",
+                      "format": "date-time"
+                    },
+                    "updatedAt": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "jobId",
+                    "creditCardId",
+                    "fileHash",
+                    "data",
+                    "userId",
+                    "status",
+                    "createdAt",
+                    "updatedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions": {
+      "get": {
+        "operationId": "getTransactions",
+        "summary": "List transactions",
+        "tags": [
+          "Transactions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "in": "query",
+            "name": "startDate",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+            },
+            "in": "query",
+            "name": "endDate",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "income",
+                "expense"
+              ]
+            },
+            "in": "query",
+            "name": "type",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "query",
+            "name": "categoryId",
+            "required": false
+          },
+          {
+            "schema": {
+              "default": 1,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            },
+            "in": "query",
+            "name": "page",
+            "required": false
+          },
+          {
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "description": {
+                            "type": "string"
+                          },
+                          "amount": {
+                            "type": "number"
+                          },
+                          "type": {
+                            "type": "string",
+                            "enum": [
+                              "income",
+                              "expense"
+                            ]
+                          },
+                          "date": {
+                            "type": "string"
+                          },
+                          "category": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "creditCardId": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "description",
+                          "amount",
+                          "type",
+                          "date",
+                          "category",
+                          "creditCardId",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "total": {
+                      "type": "number"
+                    },
+                    "page": {
+                      "type": "number"
+                    },
+                    "limit": {
+                      "type": "number"
+                    },
+                    "metadata": {
+                      "type": "object",
+                      "properties": {
+                        "totalIncomes": {
+                          "type": "number"
+                        },
+                        "totalExpenses": {
+                          "type": "number"
+                        },
+                        "balance": {
+                          "type": "number"
+                        }
+                      },
+                      "required": [
+                        "totalIncomes",
+                        "totalExpenses",
+                        "balance"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "total",
+                    "page",
+                    "limit",
+                    "metadata"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createTransaction",
+        "summary": "Create transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ]
+                  },
+                  "date": {
+                    "type": "string",
+                    "format": "date-time",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d(?::[0-5]\\d(?:\\.\\d+)?)?(?:Z))$"
+                  },
+                  "categoryId": {
+                    "type": "string"
+                  },
+                  "aiSuggest": {
+                    "default": false,
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "description",
+                  "amount",
+                  "type",
+                  "date",
+                  "categoryId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "id"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transactions/batch": {
+      "post": {
+        "operationId": "createTransactionBatch",
+        "summary": "Create transactions in batch",
+        "tags": [
+          "Transactions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "creditCardId": {
+                    "type": "string"
+                  },
+                  "transactions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "type": {
+                          "default": "expense",
+                          "type": "string",
+                          "enum": [
+                            "income",
+                            "expense"
+                          ]
+                        },
+                        "categoryId": {
+                          "type": "string"
+                        },
+                        "amount": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "createdAt": {
+                          "type": "string"
+                        },
+                        "installment": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "current": {
+                                  "type": "number"
+                                },
+                                "total": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "current",
+                                "total"
+                              ]
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "nickname": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "description",
+                        "categoryId",
+                        "amount",
+                        "createdAt",
+                        "installment",
+                        "nickname"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "creditCardId",
+                  "transactions"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/transactions/{id}": {
+      "put": {
+        "operationId": "updateTransaction",
+        "summary": "Update transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "description": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "amount": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "income",
+                      "expense"
+                    ]
+                  },
+                  "date": {
+                    "type": "string"
+                  },
+                  "categoryId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "description",
+                  "amount",
+                  "type",
+                  "date",
+                  "categoryId"
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteTransaction",
+        "summary": "Delete transaction",
+        "tags": [
+          "Transactions"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications": {
+      "get": {
+        "operationId": "listNotifications",
+        "summary": "List notifications",
+        "tags": [
+          "Notifications"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "default": 20,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "in": "query",
+            "name": "limit",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "in": "query",
+            "name": "cursor",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string"
+                          },
+                          "cursorId": {
+                            "type": "number"
+                          },
+                          "userId": {
+                            "type": "string"
+                          },
+                          "type": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          },
+                          "message": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "data": {
+                            "anyOf": [
+                              {},
+                              {
+                                "type": "null"
+                              }
+                            ]
+                          },
+                          "read": {
+                            "type": "boolean"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "cursorId",
+                          "userId",
+                          "type",
+                          "title",
+                          "message",
+                          "data",
+                          "read",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "nextCursor": {
+                      "anyOf": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "hasMore": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "data",
+                    "nextCursor",
+                    "hasMore"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/notifications/{id}/read": {
+      "patch": {
+        "operationId": "markNotificationRead",
+        "summary": "Mark notification as read",
+        "tags": [
+          "Notifications"
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Default Response"
+          }
+        }
+      }
+    },
+    "/notifications/stream": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response"
+          }
+        }
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3333",
+      "description": "Development server"
+    }
+  ]
+}

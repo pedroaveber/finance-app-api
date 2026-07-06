@@ -11,6 +11,7 @@ export const getCreditCards: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Credit Cards'],
         summary: 'List credit cards',
+        operationId: 'getCreditCards',
         response: {
           200: z.object({
             data: z.array(

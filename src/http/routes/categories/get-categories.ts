@@ -11,6 +11,7 @@ export const getCategories: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Categories'],
         summary: 'List categories',
+        operationId: 'getCategories',
         querystring: z.object({
           type: z.enum(['income', 'expense']).optional(),
         }),

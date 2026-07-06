@@ -13,6 +13,7 @@ export const importBankSlip: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['AI'],
         summary: 'Import a bank slip PDF and extract payment data',
+        operationId: 'importBankSlip',
         consumes: ['multipart/form-data'],
         response: {
           200: z.object({

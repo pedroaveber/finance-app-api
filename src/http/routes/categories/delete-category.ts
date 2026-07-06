@@ -15,6 +15,7 @@ export const deleteCategory: FastifyPluginCallbackZod = (app) => {
       schema: {
         tags: ['Categories'],
         summary: 'Delete custom category',
+        operationId: 'deleteCategory',
         params: z.object({
           id: z.string(),
         }),

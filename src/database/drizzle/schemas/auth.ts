@@ -1,8 +1,10 @@
 import { relations } from 'drizzle-orm'
 import { boolean, index, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { batchTransactions } from './batch-transactions'
 import { categories } from './categories'
 import { creditCards } from './credit-cards'
 import { invoiceUploads } from './invoice-uploads'
+import { notifications } from './notifications'
 import { transactions } from './transactions'
 
 export const users = pgTable('users', {
@@ -90,4 +92,6 @@ export const usersRelations = relations(users, ({ many }) => ({
   transactions: many(transactions),
   creditCards: many(creditCards),
   invoiceUploads: many(invoiceUploads),
+  batchTransactions: many(batchTransactions),
+  notifications: many(notifications),
 }))
