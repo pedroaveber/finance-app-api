@@ -64,7 +64,7 @@ export const getDashboard: FastifyPluginCallbackZod = (app) => {
       const [incomeResult, expenseResult] = await Promise.all([
         db
           .select({
-            total: sql<string>`coalesce(sum(${transactions.amount}), '0')`,
+            total: sql<string>`coalesce(sum(${transactions.amountInCents}), '0')`,
           })
           .from(transactions)
           .where(
@@ -76,7 +76,7 @@ export const getDashboard: FastifyPluginCallbackZod = (app) => {
           ),
         db
           .select({
-            total: sql<string>`coalesce(sum(${transactions.amount}), '0')`,
+            total: sql<string>`coalesce(sum(${transactions.amountInCents}), '0')`,
           })
           .from(transactions)
           .where(
@@ -97,7 +97,7 @@ export const getDashboard: FastifyPluginCallbackZod = (app) => {
           .select({
             id: categories.id,
             name: categories.name,
-            total: sql<string>`sum(${transactions.amount})`,
+            total: sql<string>`sum(${transactions.amountInCents})`,
             transactionCount: count(),
           })
           .from(transactions)
@@ -114,7 +114,7 @@ export const getDashboard: FastifyPluginCallbackZod = (app) => {
           .select({
             cardId: transactions.creditCardId,
             cardName: creditCards.name,
-            total: sql<string>`sum(${transactions.amount})`,
+            total: sql<string>`sum(${transactions.amountInCents})`,
           })
           .from(transactions)
           .innerJoin(creditCards, eq(transactions.creditCardId, creditCards.id))

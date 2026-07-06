@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
-import { and, eq, isNull, or } from 'drizzle-orm'
+import dayjs from 'dayjs'
+import { and, eq, gte, isNull, lte, or } from 'drizzle-orm'
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { db } from '@/database/drizzle/connection'
@@ -72,21 +73,44 @@ export const importCreditCardInvoice: FastifyPluginCallbackZod = (app) => {
         )
       }
 
-      const categories = await db
-        .select({
-          id: schema.categories.id,
-          name: schema.categories.name,
-        })
-        .from(schema.categories)
-        .where(
-          and(
-            eq(schema.categories.type, 'expense'),
-            or(
-              isNull(schema.categories.userId),
-              eq(schema.categories.userId, request.userId),
+      const [categories, lastTransactionsExample] = await Promise.all([
+        db
+          .select({
+            id: schema.categories.id,
+            name: schema.categories.name,
+          })
+          .from(schema.categories)
+          .where(
+            and(
+              eq(schema.categories.type, 'expense'),
+              or(
+                isNull(schema.categories.userId),
+                eq(schema.categories.userId, request.userId),
+              ),
             ),
           ),
-        )
+        db
+          .select({
+            description: schema.transactions.description,
+            categoryName: schema.categories.name,
+            categoryId: schema.categories.id,
+          })
+          .from(schema.transactions)
+          .where(
+            and(
+              gte(
+                schema.transactions.createdAt,
+                dayjs().subtract(60, 'days').toDate(),
+              ),
+              lte(schema.transactions.createdAt, dayjs().toDate()),
+              eq(schema.transactions.userId, request.userId),
+            ),
+          )
+          .innerJoin(
+            schema.categories,
+            eq(schema.categories.id, schema.transactions.categoryId),
+          ),
+      ])
 
       const [batchTransaction] = await db
         .insert(schema.batchTransactions)
@@ -105,6 +129,7 @@ export const importCreditCardInvoice: FastifyPluginCallbackZod = (app) => {
           userId: request.userId,
           creditCardId,
           categories: categories.map((c) => ({ id: c.id, name: c.name })),
+          lastTransactionsExample,
           batchTransactionId: batchTransaction.id,
         },
       )

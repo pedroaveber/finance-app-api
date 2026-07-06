@@ -28,7 +28,7 @@ describe('Update Transaction Route', () => {
       .set('Cookie', cookie)
       .send({
         description: 'Updated',
-        amount: 100,
+        amountInCents: 10000,
         type: 'expense',
         date: '2025-01-15',
         categoryId: category.id,
@@ -55,7 +55,7 @@ describe('Update Transaction Route', () => {
       .set('Cookie', cookie)
       .send({
         description: 'Updated',
-        amount: 100,
+        amountInCents: 10000,
         type: 'expense',
         date: '2025-01-15',
         categoryId: category.id,

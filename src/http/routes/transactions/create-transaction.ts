@@ -13,7 +13,7 @@ export const createTransaction: FastifyPluginCallbackZod = (app) => {
         operationId: 'createTransaction',
         body: z.object({
           description: z.string().min(1),
-          amount: z.number().positive(),
+          amountInCents: z.number().int().positive(),
           type: z.enum(['income', 'expense']),
           date: z.iso.datetime(),
           categoryId: z.string(),
@@ -27,7 +27,7 @@ export const createTransaction: FastifyPluginCallbackZod = (app) => {
       },
     },
     async (request, reply) => {
-      const { description, amount, type, date, categoryId, aiSuggest } =
+      const { description, amountInCents, type, date, categoryId, aiSuggest } =
         request.body
 
       if (aiSuggest && !categoryId) {
@@ -39,7 +39,7 @@ export const createTransaction: FastifyPluginCallbackZod = (app) => {
         .values({
           userId: request.userId,
           description,
-          amount: String(amount),
+          amountInCents,
           type,
           date,
           categoryId,

@@ -1,6 +1,6 @@
+import { eq } from 'drizzle-orm'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { eq } from 'drizzle-orm'
 import { app } from '@/app'
 import { db } from '@/database/drizzle/connection'
 import { notifications } from '@/database/drizzle/schemas'
@@ -49,7 +49,10 @@ describe('Read Notification Route', () => {
     const { cookie: cookieA, userId: userIdA } = await createSession()
     const { userId: userIdB } = await createSession()
 
-    const notification = await makeNotification({ userId: userIdA, read: false })
+    const notification = await makeNotification({
+      userId: userIdA,
+      read: false,
+    })
 
     const response = await request(app.server)
       .patch(`/notifications/${notification.id}/read`)

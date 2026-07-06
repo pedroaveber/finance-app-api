@@ -43,7 +43,7 @@ describe('Import Bank Slip Route', () => {
       .set('Cookie', cookie)
 
     expect(response.statusCode).toEqual(200)
-    expect(response.body.amount).toEqual(150)
+    expect(response.body.amountInCents).toEqual(15000)
     expect(response.body.dueDate).toEqual('2026-07-15')
     expect(response.body.description).toEqual('Supergasbras')
     expect(response.body.suggestedCategory).toMatchObject({ name: 'Gás' })
@@ -66,7 +66,7 @@ describe('Import Bank Slip Route', () => {
 
     expect(response.statusCode).toEqual(200)
     expect(response.body).toMatchObject({
-      amount: 250.0,
+      amountInCents: 25000,
       dueDate: '2026-08-01',
       description: 'Seguro de vida',
       suggestedCategory: null,

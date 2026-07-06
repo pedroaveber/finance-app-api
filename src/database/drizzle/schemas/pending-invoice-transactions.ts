@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { date, numeric, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
+import { date, integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core'
 import { categories } from './categories'
 import { invoiceUploads } from './invoice-uploads'
 
@@ -13,7 +13,7 @@ export const pendingInvoiceTransactions = pgTable(
       .notNull()
       .references(() => invoiceUploads.id, { onDelete: 'cascade' }),
     description: text('description').notNull(),
-    amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
+    amountInCents: integer('amount_in_cents').notNull(),
     date: date('date').notNull(),
     suggestedCategoryId: text('suggested_category_id')
       .notNull()

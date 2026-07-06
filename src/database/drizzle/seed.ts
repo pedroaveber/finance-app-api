@@ -131,7 +131,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Salário Junho/2026',
-      amount: '5500.00',
+      amountInCents: 550000,
       type: 'income',
       date: '2026-06-05',
       categoryId: defaultCatIds.get('Salário')!,
@@ -139,7 +139,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Freela - Site institucional',
-      amount: '2000.00',
+      amountInCents: 200000,
       type: 'income',
       date: '2026-06-10',
       categoryId: johnCatIds.get('Freela')!,
@@ -147,7 +147,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Almoço no centro',
-      amount: '45.00',
+      amountInCents: 4500,
       type: 'expense',
       date: '2026-06-03',
       categoryId: johnCatIds.get('Restaurante')!,
@@ -155,7 +155,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Jantar Família',
-      amount: '132.50',
+      amountInCents: 13250,
       type: 'expense',
       date: '2026-06-10',
       categoryId: johnCatIds.get('Restaurante')!,
@@ -165,7 +165,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Compras do mês',
-      amount: '387.50',
+      amountInCents: 38750,
       type: 'expense',
       date: '2026-06-07',
       categoryId: johnCatIds.get('Mercado')!,
@@ -175,7 +175,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Compras semanais',
-      amount: '215.30',
+      amountInCents: 21530,
       type: 'expense',
       date: '2026-06-14',
       categoryId: johnCatIds.get('Mercado')!,
@@ -183,7 +183,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Gasolina',
-      amount: '187.00',
+      amountInCents: 18700,
       type: 'expense',
       date: '2026-06-08',
       categoryId: johnCatIds.get('Combustível')!,
@@ -191,7 +191,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Gasolina',
-      amount: '205.00',
+      amountInCents: 20500,
       type: 'expense',
       date: '2026-06-15',
       categoryId: johnCatIds.get('Combustível')!,
@@ -202,7 +202,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Netflix',
-      amount: '55.90',
+      amountInCents: 5590,
       type: 'expense',
       date: '2026-06-05',
       categoryId: johnCatIds.get('Streaming')!,
@@ -212,7 +212,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Mensalidade',
-      amount: '99.90',
+      amountInCents: 9990,
       type: 'expense',
       date: '2026-06-01',
       categoryId: johnCatIds.get('Academia')!,
@@ -220,7 +220,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Conta de luz',
-      amount: '156.80',
+      amountInCents: 15680,
       type: 'expense',
       date: '2026-06-15',
       categoryId: defaultCatIds.get('Luz')!,
@@ -228,7 +228,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Internet',
-      amount: '109.90',
+      amountInCents: 10990,
       type: 'expense',
       date: '2026-06-10',
       categoryId: defaultCatIds.get('Internet')!,
@@ -236,7 +236,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Aluguel',
-      amount: '1800.00',
+      amountInCents: 180000,
       type: 'expense',
       date: '2026-06-01',
       categoryId: defaultCatIds.get('Moradia')!,
@@ -244,7 +244,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Salário Julho/2026',
-      amount: '5500.00',
+      amountInCents: 550000,
       type: 'income',
       date: '2026-07-05',
       categoryId: defaultCatIds.get('Salário')!,
@@ -252,7 +252,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Mensalidade',
-      amount: '99.90',
+      amountInCents: 9990,
       type: 'expense',
       date: '2026-07-01',
       categoryId: johnCatIds.get('Academia')!,
@@ -260,7 +260,7 @@ async function main() {
     {
       userId: johnId,
       description: 'Netflix',
-      amount: '55.90',
+      amountInCents: 5590,
       type: 'expense',
       date: '2026-07-05',
       categoryId: johnCatIds.get('Streaming')!,
@@ -285,7 +285,7 @@ async function main() {
     {
       invoiceUploadId: johnInvoiceUpload.id,
       description: 'Amazon Prime',
-      amount: '19.90',
+      amountInCents: 1990,
       date: '2026-06-03',
       suggestedCategoryId: johnCatIds.get('Streaming')!,
       status: 'pending',
@@ -293,7 +293,7 @@ async function main() {
     {
       invoiceUploadId: johnInvoiceUpload.id,
       description: 'Uber',
-      amount: '34.50',
+      amountInCents: 3450,
       date: '2026-06-07',
       suggestedCategoryId: defaultCatIds.get('Transporte')!,
       status: 'pending',
@@ -301,7 +301,7 @@ async function main() {
     {
       invoiceUploadId: johnInvoiceUpload.id,
       description: 'iFood',
-      amount: '42.00',
+      amountInCents: 4200,
       date: '2026-06-12',
       suggestedCategoryId: johnCatIds.get('Restaurante')!,
       status: 'pending',
@@ -393,7 +393,7 @@ async function main() {
     transactions: {
       columns: {
         description: funcs.loremIpsum({ sentencesCount: 1 }),
-        amount: funcs.number({ minValue: 10, maxValue: 5000, precision: 2 }),
+        amountInCents: funcs.int({ minValue: 1000, maxValue: 500000 }),
         type: funcs.valuesFromArray({
           values: [
             { weight: 0.7, values: ['expense'] },
@@ -434,7 +434,7 @@ async function main() {
     pendingInvoiceTransactions: {
       columns: {
         description: funcs.loremIpsum({ sentencesCount: 1 }),
-        amount: funcs.number({ minValue: 10, maxValue: 2000, precision: 2 }),
+        amountInCents: funcs.int({ minValue: 1000, maxValue: 200000 }),
         date: funcs.date({
           minDate: '2026-01-01',
           maxDate: '2026-07-03',

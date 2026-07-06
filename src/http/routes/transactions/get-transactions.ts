@@ -28,7 +28,8 @@ export const getTransactions: FastifyPluginCallbackZod = (app) => {
               z.object({
                 id: z.string(),
                 description: z.string(),
-                amount: z.number(),
+                nickname: z.string().nullable(),
+                amountInCents: z.number().int(),
                 type: z.enum(['income', 'expense']),
                 date: z.string(),
                 category: z.object({
@@ -76,7 +77,8 @@ export const getTransactions: FastifyPluginCallbackZod = (app) => {
           .select({
             id: transactions.id,
             description: transactions.description,
-            amount: transactions.amount,
+            nickname: transactions.nickname,
+            amountInCents: transactions.amountInCents,
             type: transactions.type,
             date: transactions.date,
             categoryId: transactions.categoryId,
@@ -97,7 +99,7 @@ export const getTransactions: FastifyPluginCallbackZod = (app) => {
         db
           .select({
             type: transactions.type,
-            total: sql<string>`sum(${transactions.amount})`,
+            total: sql<string>`sum(${transactions.amountInCents})`,
           })
           .from(transactions)
           .where(and(...where))
@@ -114,7 +116,8 @@ export const getTransactions: FastifyPluginCallbackZod = (app) => {
       const data = rows.map((row) => ({
         id: row.id,
         description: row.description,
-        amount: Number(row.amount),
+        nickname: row.nickname,
+        amountInCents: row.amountInCents,
         type: row.type as 'income' | 'expense',
         date: row.date,
         category: {

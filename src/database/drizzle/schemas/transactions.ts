@@ -1,8 +1,8 @@
 import { relations } from 'drizzle-orm'
 import {
   date,
+  integer,
   jsonb,
-  numeric,
   pgTable,
   text,
   timestamp,
@@ -25,7 +25,7 @@ export const transactions = pgTable('transactions', {
     onDelete: 'cascade',
   }),
   description: text('description').notNull(),
-  amount: numeric('amount', { precision: 12, scale: 2 }).notNull(),
+  amountInCents: integer('amount_in_cents').notNull(),
   type: text('type', { enum: ['income', 'expense'] }).notNull(),
   date: date('date').notNull(),
   installment: jsonb('installment').$type<{

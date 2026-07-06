@@ -1,20 +1,22 @@
 import type { FastifyPluginCallbackZod } from 'fastify-type-provider-zod'
-import { getRedis } from '@/database/redis'
+import { getSubscriberRedis } from '@/database/redis'
 
 export const notificationStream: FastifyPluginCallbackZod = (app) => {
   app.get('/notifications/stream', { sse: true }, async (request, reply) => {
-    const redis = getRedis()
+    const subscriber = getSubscriberRedis()
     const channel = `notifications:${request.userId}`
 
-    await redis.subscribe(channel)
-
-    redis.on('message', (_channel, message) => {
+    const onMessage = (_channel: string, message: string) => {
+      if (_channel !== channel) return
       reply.sse.send({ data: message })
-    })
+    }
+
+    subscriber.on('message', onMessage)
+    await subscriber.subscribe(channel)
 
     reply.sse.onClose(async () => {
-      await redis.unsubscribe(channel)
-      await redis.quit()
+      subscriber.removeListener('message', onMessage)
+      await subscriber.unsubscribe(channel)
     })
   })
 }

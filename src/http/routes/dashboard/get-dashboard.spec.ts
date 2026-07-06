@@ -27,20 +27,20 @@ describe('Get Dashboard Route', () => {
       userId,
       categoryId: incomeCategory.id,
       type: 'income',
-      amount: 5000,
+      amountInCents: 500000,
     })
     await makeTransaction({
       userId,
       categoryId: expenseCategory.id,
       type: 'expense',
-      amount: 1000,
+      amountInCents: 100000,
       creditCardId: creditCard.id,
     })
     await makeTransaction({
       userId,
       categoryId: expenseCategory.id,
       type: 'expense',
-      amount: 500,
+      amountInCents: 50000,
     })
 
     const startDate = dayjs().subtract(30, 'days').format('YYYY-MM-DD')
@@ -55,21 +55,21 @@ describe('Get Dashboard Route', () => {
     expect(response.body).toMatchObject({
       startDate,
       endDate,
-      totalIncome: 5000,
-      totalExpenses: 1500,
-      balance: 3500,
+      totalIncome: 500000,
+      totalExpenses: 150000,
+      balance: 350000,
     })
     expect(response.body.byCategory).toHaveLength(1)
     expect(response.body.byCategory[0]).toMatchObject({
       category: { id: expenseCategory.id, name: expenseCategory.name },
-      total: 1500,
+      total: 150000,
       transactionCount: 2,
     })
     expect(response.body.byCard).toHaveLength(1)
     expect(response.body.byCard[0]).toMatchObject({
       cardId: creditCard.id,
       cardName: creditCard.name,
-      total: 1000,
+      total: 100000,
     })
   })
 

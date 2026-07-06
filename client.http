@@ -291,7 +291,7 @@ Content-Type: application/json
 
 {
   "description": "Supermercado",
-  "amount": 150.50,
+  "amountInCents": 15050,
   "type": "expense",
   "date": "2026-01-15T00:00:00.000Z",
   "categoryId": "CATEGORY_UUID",
@@ -306,7 +306,7 @@ Content-Type: application/json
 
 {
   "description": "Supermercado Atualizado",
-  "amount": 200.00,
+  "amountInCents": 20000,
   "type": "expense",
   "date": "2026-01-15",
   "categoryId": "CATEGORY_UUID"
@@ -330,7 +330,7 @@ Content-Type: application/json
       "description": "Supermercado",
       "type": "expense",
       "categoryId": "CATEGORY_UUID",
-      "amount": 250.50,
+      "amountInCents": 25050,
       "createdAt": "2026-01-15",
       "installment": null,
       "nickname": null
@@ -339,7 +339,7 @@ Content-Type: application/json
       "description": "Gasolina",
       "type": "expense",
       "categoryId": "CATEGORY_UUID",
-      "amount": 180.00,
+      "amountInCents": 18000,
       "createdAt": "2026-01-16",
       "installment": { "current": 1, "total": 3 },
       "nickname": "Posto Shell"

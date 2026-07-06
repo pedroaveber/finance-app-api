@@ -23,7 +23,7 @@ describe('Create Transaction Route', () => {
       .set('Cookie', cookie)
       .send({
         description: 'Supermercado',
-        amount: 250.5,
+        amountInCents: 25050,
         type: 'expense',
         date: '2025-01-15T00:00:00.000Z',
         categoryId: category.id,
@@ -45,7 +45,7 @@ describe('Create Transaction Route', () => {
       .set('Cookie', cookie)
       .send({
         description: 'Supermercado',
-        amount: -50,
+        amountInCents: -50,
         type: 'expense',
         date: '2025-01-15T00:00:00.000Z',
         categoryId: category.id,

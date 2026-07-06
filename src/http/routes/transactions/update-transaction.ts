@@ -18,7 +18,7 @@ export const updateTransaction: FastifyPluginCallbackZod = (app) => {
         }),
         body: z.object({
           description: z.string().min(1),
-          amount: z.number().positive(),
+          amountInCents: z.number().int().positive(),
           type: z.enum(['income', 'expense']),
           date: z.string(),
           categoryId: z.string(),
@@ -45,7 +45,7 @@ export const updateTransaction: FastifyPluginCallbackZod = (app) => {
         .set({
           type: request.body.type,
           date: request.body.date,
-          amount: String(request.body.amount),
+          amountInCents: request.body.amountInCents,
           categoryId: request.body.categoryId,
           description: request.body.description,
         })

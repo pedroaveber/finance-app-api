@@ -36,6 +36,13 @@
       "when": 1783357942610,
       "tag": "0004_chief_archangel",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1785000000000,
+      "tag": "0005_whole_squirrel_girl",
+      "breakpoints": true
     }
   ]
 }

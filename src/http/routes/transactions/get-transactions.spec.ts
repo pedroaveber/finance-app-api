@@ -25,13 +25,13 @@ describe('Get Transactions Route', () => {
       userId,
       categoryId: incomeCategory.id,
       type: 'income',
-      amount: 5000,
+      amountInCents: 500000,
     })
     await makeTransaction({
       userId,
       categoryId: expenseCategory.id,
       type: 'expense',
-      amount: 1000,
+      amountInCents: 100000,
     })
 
     const startDate = dayjs().subtract(30, 'days').format('YYYY-MM-DD')
@@ -50,9 +50,9 @@ describe('Get Transactions Route', () => {
       limit: 50,
     })
     expect(response.body.metadata).toMatchObject({
-      totalIncomes: 5000,
-      totalExpenses: 1000,
-      balance: 4000,
+      totalIncomes: 500000,
+      totalExpenses: 100000,
+      balance: 400000,
     })
   })
 

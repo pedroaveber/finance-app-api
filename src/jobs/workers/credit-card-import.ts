@@ -1,8 +1,10 @@
 import { eq } from 'drizzle-orm'
 import { db } from '@/database/drizzle/connection'
+import * as schema from '@/database/drizzle/schemas'
 import { batchTransactions, notifications } from '@/database/drizzle/schemas'
 import { getRedis } from '@/database/redis'
 import { createWorker } from '@/lib/queue'
+import type { ParseCreditCardInvoiceParams } from '@/services/ai/import-credit-card-invoice'
 import { parseCreditCardInvoice } from '@/services/ai/import-credit-card-invoice'
 import { QUEUE_NAMES } from '../queues'
 
@@ -13,21 +15,29 @@ type CreditCardImportPayload = {
   userId: string
   creditCardId: string
   categories: CategoryItem[]
+  lastTransactionsExample: ParseCreditCardInvoiceParams['lastTransactionsExample']
   batchTransactionId: string
 }
 
 export const creditCardImportWorker = createWorker<CreditCardImportPayload>(
   QUEUE_NAMES.CREDIT_CARD_IMPORT,
   async (job) => {
-    const { pdfBuffer, userId, creditCardId, categories, batchTransactionId } =
-      job.data
+    const {
+      pdfBuffer,
+      userId,
+      creditCardId,
+      categories,
+      lastTransactionsExample,
+      batchTransactionId,
+    } = job.data
 
     try {
-      const result = await parseCreditCardInvoice(
-        Buffer.from(pdfBuffer),
-        categories.map((c) => c.name),
+      const result = await parseCreditCardInvoice({
+        pdfBuffer: Buffer.from(pdfBuffer),
+        availableCategories: categories.map((c) => c.name),
         userId,
-      )
+        lastTransactionsExample,
+      })
 
       const items = result.items.map((item) => {
         const matchedCategory = item.suggestedCategory
@@ -39,7 +49,7 @@ export const creditCardImportWorker = createWorker<CreditCardImportPayload>(
 
         return {
           description: item.description,
-          amount: item.amount,
+          amountInCents: Math.round(item.amount * 100),
           installment: item.installment,
           suggestedCategory: matchedCategory ?? null,
         }

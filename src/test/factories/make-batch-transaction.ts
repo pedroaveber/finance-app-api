@@ -7,10 +7,16 @@ type BatchTransactionOverrides = {
   creditCardId?: string | null
   jobId?: string
   fileHash?: string
-  status?: 'awaiting_ai_analysis' | 'failed' | 'finished' | 'awaiting_manual_approve'
+  status?:
+    | 'awaiting_ai_analysis'
+    | 'failed'
+    | 'finished'
+    | 'awaiting_manual_approve'
 }
 
-export async function makeBatchTransaction(overrides: BatchTransactionOverrides = {}) {
+export async function makeBatchTransaction(
+  overrides: BatchTransactionOverrides = {},
+) {
   const [batch] = await db
     .insert(schema.batchTransactions)
     .values({
@@ -22,18 +28,20 @@ export async function makeBatchTransaction(overrides: BatchTransactionOverrides 
         items: [
           {
             description: faker.commerce.productName(),
-            amount: faker.number.float({ fraction: 2 }),
+            amountInCents: faker.number.int({ min: 100, max: 1000000 }),
             installment: null,
             suggestedCategory: null,
           },
         ],
       },
-      status: overrides.status ?? faker.helpers.arrayElement([
-        'awaiting_ai_analysis',
-        'failed',
-        'finished',
-        'awaiting_manual_approve',
-      ]),
+      status:
+        overrides.status ??
+        faker.helpers.arrayElement([
+          'awaiting_ai_analysis',
+          'failed',
+          'finished',
+          'awaiting_manual_approve',
+        ]),
     })
     .returning()
 

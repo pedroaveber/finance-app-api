@@ -17,7 +17,7 @@ export const importBankSlip: FastifyPluginCallbackZod = (app) => {
         consumes: ['multipart/form-data'],
         response: {
           200: z.object({
-            amount: z.number(),
+            amountInCents: z.number().int(),
             dueDate: z.string(),
             description: z.string(),
             suggestedCategory: z
@@ -78,7 +78,7 @@ export const importBankSlip: FastifyPluginCallbackZod = (app) => {
         : null
 
       return reply.status(200).send({
-        amount: result.amount,
+        amountInCents: Math.round(result.amount * 100),
         dueDate: result.dueDate,
         description: result.description,
         suggestedCategory: matchedCategory ?? null,

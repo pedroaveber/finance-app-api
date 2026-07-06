@@ -26,11 +26,23 @@ export type ParseCreditCardInvoiceResponse = {
   items: CreditCardInvoiceItem[]
 }
 
-export async function parseCreditCardInvoice(
-  pdfBuffer: Buffer,
-  availableCategories: string[],
-  userId: string,
-): Promise<ParseCreditCardInvoiceResponse> {
+export type ParseCreditCardInvoiceParams = {
+  pdfBuffer: Buffer
+  availableCategories: string[]
+  userId: string
+  lastTransactionsExample?: {
+    description: string
+    categoryName: string
+    categoryId: string
+  }[]
+}
+
+export async function parseCreditCardInvoice({
+  pdfBuffer,
+  availableCategories,
+  userId,
+  lastTransactionsExample,
+}: ParseCreditCardInvoiceParams): Promise<ParseCreditCardInvoiceResponse> {
   const startTime = performance.now()
 
   try {
@@ -58,7 +70,16 @@ For each purchase, extract:
 3. installment: If the purchase is an installment (parcelada), return the current installment in the format "X/Y" (e.g., "2/12" for the second of twelve installments). Return null if it's a single payment.
 4. suggestedCategory: Pick the EXACT category name from the list below that best matches this purchase. Be specific — prefer a narrower category (e.g., "Gás" over "Utilidades"). Return null only if absolutely nothing fits.
 
-Available categories: ${JSON.stringify(availableCategories)}`,
+Use the user's recent transactions below as reference for which categories similar purchases were assigned to in the past. This helps ensure consistency with the user's existing categorization patterns.
+
+Available categories: ${JSON.stringify(availableCategories)}
+
+${
+  lastTransactionsExample && lastTransactionsExample.length > 0
+    ? `Recent user transactions (description → category):
+${lastTransactionsExample.map((t) => `- "${t.description}" → ${t.categoryName}`).join('\n')}`
+    : ''
+}`,
             },
             {
               type: 'file',

@@ -20,7 +20,7 @@ export const batchTransactions = pgTable('batch_transactions', {
   data: jsonb().$type<{
     items: {
       description: string
-      amount: number
+      amountInCents: number
       installment: string | null
       suggestedCategory: { id: string; name: string } | null
     }[]
