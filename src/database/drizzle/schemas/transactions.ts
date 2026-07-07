@@ -25,7 +25,7 @@ export const transactions = pgTable('transactions', {
     onDelete: 'cascade',
   }),
   description: text('description').notNull(),
-  amountInCents: integer('amount_in_cents').notNull(),
+  amountInCents: integer('amount_in_cents').notNull().default(0),
   type: text('type', { enum: ['income', 'expense'] }).notNull(),
   date: date('date').notNull(),
   installment: jsonb('installment').$type<{

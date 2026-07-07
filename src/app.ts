@@ -24,6 +24,7 @@ import {
 } from './jobs/queues'
 
 const app = fastify({
+  trustProxy: env.NODE_ENV === 'production',
   logger:
     env.NODE_ENV === 'development'
       ? {
@@ -43,8 +44,8 @@ app.setValidatorCompiler(validatorCompiler)
 app.setSerializerCompiler(serializerCompiler)
 
 app.register(fastifyCors, {
-  origin: ['http://localhost:5173'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  origin: [env.CLIENT_ORIGIN],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
 })
@@ -68,8 +69,11 @@ app.register(fastifySwagger, {
     },
     servers: [
       {
-        url: 'http://localhost:3333',
-        description: 'Development server',
+        url: env.BETTER_AUTH_URL,
+        description:
+          env.NODE_ENV === 'production'
+            ? 'Production server'
+            : 'Development server',
       },
     ],
   },

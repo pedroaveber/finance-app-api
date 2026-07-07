@@ -5,43 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1783013269502,
-      "tag": "0000_luxuriant_miss_america",
+      "when": 1783369424872,
+      "tag": "0000_square_mongoose",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1783097617638,
-      "tag": "0001_yummy_kitty_pryde",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1783105296573,
-      "tag": "0002_heavy_speedball",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1783357029861,
-      "tag": "0003_careless_mole_man",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1783357942610,
-      "tag": "0004_chief_archangel",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1785000000000,
-      "tag": "0005_whole_squirrel_girl",
+      "when": 1783431310730,
+      "tag": "0001_default_categories",
       "breakpoints": true
     }
   ]

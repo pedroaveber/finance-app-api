@@ -58,7 +58,10 @@ export const authRoutes = async (app: FastifyInstance) => {
         'Sign-in, sign-up, session, email verification, password reset — gerenciado internamente pelo better-auth',
     },
     async handler(request, reply) {
-      const url = new URL(request.url, `http://${request.headers.host}`)
+      const url = new URL(
+        request.url,
+        `${request.protocol}://${request.hostname}`,
+      )
       const headers = fromNodeHeaders(request.headers)
 
       const req = new Request(url.toString(), {

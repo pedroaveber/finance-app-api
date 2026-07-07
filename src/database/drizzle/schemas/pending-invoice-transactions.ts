@@ -13,7 +13,7 @@ export const pendingInvoiceTransactions = pgTable(
       .notNull()
       .references(() => invoiceUploads.id, { onDelete: 'cascade' }),
     description: text('description').notNull(),
-    amountInCents: integer('amount_in_cents').notNull(),
+    amountInCents: integer('amount_in_cents').notNull().default(0),
     date: date('date').notNull(),
     suggestedCategoryId: text('suggested_category_id')
       .notNull()

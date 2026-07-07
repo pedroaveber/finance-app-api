@@ -1,3 +1,16 @@
+CREATE TYPE "public"."batch_transactions_status_enum" AS ENUM('awaiting_ai_analysis', 'failed', 'finished', 'awaiting_manual_approve');--> statement-breakpoint
+CREATE TABLE "ai_usage_logs" (
+	"id" text PRIMARY KEY NOT NULL,
+	"user_id" text NOT NULL,
+	"model" text NOT NULL,
+	"route" text NOT NULL,
+	"input_tokens" integer NOT NULL,
+	"output_tokens" integer NOT NULL,
+	"total_tokens" integer NOT NULL,
+	"duration_ms" integer,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "accounts" (
 	"id" text PRIMARY KEY NOT NULL,
 	"account_id" text NOT NULL,
@@ -46,6 +59,18 @@ CREATE TABLE "verifications" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "batch_transactions" (
+	"id" text PRIMARY KEY NOT NULL,
+	"job_id" text NOT NULL,
+	"credit_card_id" text,
+	"file_hash" text NOT NULL,
+	"data" jsonb,
+	"user_id" text,
+	"status" "batch_transactions_status_enum" DEFAULT 'awaiting_ai_analysis' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp
+);
+--> statement-breakpoint
 CREATE TABLE "categories" (
 	"id" text PRIMARY KEY NOT NULL,
 	"user_id" text,
@@ -75,11 +100,23 @@ CREATE TABLE "invoice_uploads" (
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "notifications" (
+	"id" text PRIMARY KEY NOT NULL,
+	"cursor_id" serial NOT NULL,
+	"user_id" text NOT NULL,
+	"type" text NOT NULL,
+	"title" text NOT NULL,
+	"message" text,
+	"data" jsonb,
+	"read" boolean DEFAULT false NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "pending_invoice_transactions" (
 	"id" text PRIMARY KEY NOT NULL,
 	"invoice_upload_id" text NOT NULL,
 	"description" text NOT NULL,
-	"amount" numeric(12, 2) NOT NULL,
+	"amount_in_cents" integer DEFAULT 0 NOT NULL,
 	"date" date NOT NULL,
 	"suggested_category_id" text NOT NULL,
 	"category_id" text,
@@ -93,18 +130,24 @@ CREATE TABLE "transactions" (
 	"category_id" text NOT NULL,
 	"credit_card_id" text,
 	"description" text NOT NULL,
-	"amount" numeric(12, 2) NOT NULL,
+	"amount_in_cents" integer DEFAULT 0 NOT NULL,
 	"type" text NOT NULL,
 	"date" date NOT NULL,
+	"installment" jsonb,
+	"nickname" text,
 	"created_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+ALTER TABLE "ai_usage_logs" ADD CONSTRAINT "ai_usage_logs_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "batch_transactions" ADD CONSTRAINT "batch_transactions_credit_card_id_credit_cards_id_fk" FOREIGN KEY ("credit_card_id") REFERENCES "public"."credit_cards"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "batch_transactions" ADD CONSTRAINT "batch_transactions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "categories" ADD CONSTRAINT "categories_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "credit_cards" ADD CONSTRAINT "credit_cards_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invoice_uploads" ADD CONSTRAINT "invoice_uploads_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "invoice_uploads" ADD CONSTRAINT "invoice_uploads_credit_card_id_credit_cards_id_fk" FOREIGN KEY ("credit_card_id") REFERENCES "public"."credit_cards"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "notifications" ADD CONSTRAINT "notifications_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "pending_invoice_transactions" ADD CONSTRAINT "pending_invoice_transactions_invoice_upload_id_invoice_uploads_id_fk" FOREIGN KEY ("invoice_upload_id") REFERENCES "public"."invoice_uploads"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "pending_invoice_transactions" ADD CONSTRAINT "pending_invoice_transactions_suggested_category_id_categories_id_fk" FOREIGN KEY ("suggested_category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "pending_invoice_transactions" ADD CONSTRAINT "pending_invoice_transactions_category_id_categories_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."categories"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

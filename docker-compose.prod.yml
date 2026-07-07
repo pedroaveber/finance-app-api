@@ -1,74 +1,90 @@
+# Production stack for VPS deployment.
+#
+# External services: Neon (Postgres) + Upstash (Redis)
+# Start with 3 API replicas:
+#   docker compose -f docker-compose.prod.yml up -d --scale api=3
+#
+# Copy .env.prod.example to .env and fill in the values before starting.
+
+x-api-environment: &api-environment
+  NODE_ENV: production
+  PORT: "3333"
+  HOST: 0.0.0.0
+  DATABASE_URL: ${DATABASE_URL}
+  REDIS_URL: ${REDIS_URL}
+  AUTH_SECRET: ${AUTH_SECRET}
+  BETTER_AUTH_URL: ${BETTER_AUTH_URL}
+  CLIENT_ORIGIN: ${CLIENT_ORIGIN}
+  GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+  GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+  GEMINI_API_KEY: ${GEMINI_API_KEY}
+  OTEL_LOGS_EXPORTER: none
+  OTEL_TRACES_EXPORTER: otlp
+  OTEL_METRICS_EXPORTER: otlp
+  OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+  OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://opentelemetry-collector:4317
+  RESEND_API_KEY: ${RESEND_API_KEY:-}
+
 services:
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrate
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+    restart: "no"
+
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "3333:3333"
+      target: production
+    expose:
+      - "3333"
     environment:
-      NODE_ENV: production
-      PORT: "3333"
-      HOST: 0.0.0.0
-      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/postgres
-      REDIS_URL: redis://redis:6379
-      AUTH_SECRET: ${AUTH_SECRET}
-      BETTER_AUTH_URL: http://localhost:3333
-      CLIENT_ORIGIN: http://localhost:5173
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
-      OTEL_LOGS_EXPORTER: none
-      OTEL_TRACES_EXPORTER: otlp
-      OTEL_METRICS_EXPORTER: otlp
-      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
-      OTEL_EXPORTER_OTLP_METRICS_ENDPOINT: http://opentelemetry-collector:4317
-      RESEND_API_KEY: ${RESEND_API_KEY:-}
-    command: >
-      sh -c "pnpm run db:migrate && pnpm run db:seed && node dist/server.js"
+      <<: *api-environment
+    restart: unless-stopped
     depends_on:
-      postgres:
+      migrate:
+        condition: service_completed_successfully
+      opentelemetry-collector:
         condition: service_started
-      redis:
-        condition: service_started
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3333/health-check').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
-  postgres:
-    image: postgres:17-alpine
+  nginx:
+    image: nginx:alpine
     ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-
-  postgres-test:
-    image: postgres:17-alpine
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres-test
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
+      - "${NGINX_HTTP_PORT:-80}:80"
     volumes:
-      - redis-data:/data
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    restart: unless-stopped
+    depends_on:
+      - api
 
   opentelemetry-collector:
     hostname: opentelemetry-collector
     image: otel/opentelemetry-collector:latest
-    command: [ "--config=/etc/otel-collector-config.yml" ]
+    command: ["--config=/etc/otel-collector-config.yml"]
     volumes:
       - ./infra/otel-collector-config.yml:/etc/otel-collector-config.yml
     restart: unless-stopped
     environment:
-      - DEPLOY_ENV=dev
-    ports:
-      - "8888:8888" # Prometheus metrics exposed by the collector
-      - "8889:8889" # Prometheus exporter metrics
-      - "4317:4317" # OTLP gRPC receiver
+      - DEPLOY_ENV=prod
+    expose:
+      - "4317"
+      - "8889"
     depends_on:
       - prometheus
 
@@ -76,19 +92,19 @@ services:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
-      - "3000:3000"
+      - "${GRAFANA_PORT:-3000}:3000"
     volumes:
-      - ./infra/grafana/provisioning:/etc/grafana/provisioning #https://grafana.com/docs/grafana/latest/administration/provisioning/
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning
       - ./data/grafana-data:/var/lib/grafana
       - /etc/localtime:/etc/localtime:ro
-
     environment:
-      - GF_AUTH_ANONYMOUS_ENABLED=true
-      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ANONYMOUS_ENABLED=${GRAFANA_ANONYMOUS_AUTH:-false}
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
       - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-exploretraces-app/grafana-exploretraces-app-latest.zip;grafana-traces-app
-
-    links:
+    restart: unless-stopped
+    depends_on:
       - opentelemetry-collector
       - prometheus
 
@@ -104,8 +120,6 @@ services:
       - ./infra/prometheus.yml:/etc/prometheus.yaml
       - /etc/localtime:/etc/localtime:ro
       - ./data/prometheus-data:/prometheus
-    ports:
-      - "9090:9090"
-
-volumes:
-  redis-data:
+    expose:
+      - "9090"
+    restart: unless-stopped
